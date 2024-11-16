@@ -3,11 +3,17 @@ package cotato.backend.domains.post;
 import static cotato.backend.common.exception.ErrorCode.*;
 
 import cotato.backend.domains.post.dto.PostDTO;
+import cotato.backend.domains.post.dto.PostListDTO;
 import cotato.backend.domains.post.exception.PostErrorCode;
 import cotato.backend.domains.post.exception.PostException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +28,26 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostService {
 	private static final long INCREASE_VIEWS_AMOUNT = 1L;
+	private static final String COLUMN_VIEWS = "views";
+	private static final int PAGE_SIZE = 10;
 
 	private final PostRepository postRepository;
+
+	@Transactional(readOnly = true)
+	protected Sort getSort() {
+		return Sort.by(
+				Order.desc(COLUMN_VIEWS)
+		);
+	}
+
+	@Transactional(readOnly = true)
+	protected Pageable getPageable(final int page) {
+		return PageRequest.of(
+				page,
+				PAGE_SIZE,
+				getSort()
+		);
+	}
 
 	// 로컬 파일 경로로부터 엑셀 파일을 읽어 Post 엔터티로 변환하고 저장
 	@Transactional
@@ -71,5 +95,16 @@ public class PostService {
 		}
 
 		postRepository.deleteById(id);
+	}
+
+	// page 값으로 Pageable 생성하고 views가 높은 순으로 목록 조회
+	// 10개의 게시글과 현재 페이, 전체 페이지 수 반환
+	@Transactional(readOnly = true)
+	public PostListDTO getPosts(final int page) {
+		Pageable pageable = getPageable(page);
+
+		return PostListDTO.toPostListDTO(
+				postRepository.findAll(pageable)
+		);
 	}
 }

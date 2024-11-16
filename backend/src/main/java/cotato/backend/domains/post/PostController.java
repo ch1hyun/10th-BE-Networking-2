@@ -1,8 +1,10 @@
 package cotato.backend.domains.post;
 
 import cotato.backend.domains.post.dto.PostDTO;
+import cotato.backend.domains.post.dto.PostListDTO;
 import cotato.backend.domains.post.dto.request.SavePostRequest;
 import cotato.backend.domains.post.dto.response.PostDetailResponse;
+import cotato.backend.domains.post.dto.response.PostListResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +33,14 @@ public class PostController {
 		postService.saveEstatesByExcel(request.path());
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(DataResponse.created());
+	}
+
+	@GetMapping
+	public ResponseEntity<DataResponse<PostListResponse>> getPosts(final @RequestParam(required = false, defaultValue = "0") int page) {
+		PostListDTO postListDTO = postService.getPosts(page);
+		PostListResponse postListResponse = PostListResponse.toPostListResponse(postListDTO);
+
+		return ResponseEntity.ok(DataResponse.from(postListResponse));
 	}
 
 	@PostMapping
