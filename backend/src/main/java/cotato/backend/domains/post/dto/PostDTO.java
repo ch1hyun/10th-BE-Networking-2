@@ -1,5 +1,6 @@
 package cotato.backend.domains.post.dto;
 
+import cotato.backend.domains.post.Post;
 import cotato.backend.domains.post.dto.request.SavePostRequest;
 import java.util.Map;
 
@@ -32,6 +33,16 @@ public record PostDTO (
                 savePostRequest.content(),
                 savePostRequest.name(),
                 DEFAULT_VIEWS
+        );
+    }
+
+    public static PostDTO toPostDTO(final Post post) {
+        return new PostDTO(
+                post.getId(),
+                post.getTitle(),
+                post.getContent(),
+                post.getName(),
+                post.getViews()
         );
     }
 }

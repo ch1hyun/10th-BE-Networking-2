@@ -1,5 +1,6 @@
 package cotato.backend.common.exception;
 
+import cotato.backend.domains.post.exception.PostException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -19,9 +20,16 @@ public class GlobalExceptionHandler {
 		return makeErrorResponseEntity(e.getHttpStatus(), e.getMessage(), e.getCode());
 	}
 
+	@ExceptionHandler(PostException.class)
+	public ResponseEntity<Object> handlePostException(PostException e) {
+		log.warn("handlePostException", e);
+
+		return makeErrorResponseEntity(e.getHttpStatus(), e.getMessage(), e.getCode());
+	}
+
 	private ResponseEntity<Object> makeErrorResponseEntity(HttpStatus httpStatus, String message, String code) {
 		return ResponseEntity
-			.status(httpStatus)
-			.body(ErrorResponse.of(httpStatus, message, code));
+				.status(httpStatus)
+				.body(ErrorResponse.of(httpStatus, message, code));
 	}
 }

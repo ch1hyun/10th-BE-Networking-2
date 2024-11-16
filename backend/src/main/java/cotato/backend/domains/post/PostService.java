@@ -3,6 +3,8 @@ package cotato.backend.domains.post;
 import static cotato.backend.common.exception.ErrorCode.*;
 
 import cotato.backend.domains.post.dto.PostDTO;
+import cotato.backend.domains.post.exception.PostErrorCode;
+import cotato.backend.domains.post.exception.PostException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostService {
+	private static final long INCREASE_VIEWS_AMOUNT = 1L;
 
 	private final PostRepository postRepository;
 
@@ -43,5 +46,18 @@ public class PostService {
 	@Transactional
 	public void savePost(final PostDTO postDTO) {
 		postRepository.save(Post.toPost(postDTO));
+	}
+
+	// 전달받은 id 값으로 Post 엔티티를 조회하고, PostDTO로 변환해 반환
+	// 조회 성공 시, views 값을 1 늘려줌
+	@Transactional
+	public PostDTO findPostById(final long id) {
+		Post foundPost = postRepository.findById(id).orElseThrow(
+				() -> PostException.from(PostErrorCode.NOT_EXIST)
+		);
+
+		foundPost.setViews(foundPost.getViews() + INCREASE_VIEWS_AMOUNT);
+
+		return PostDTO.toPostDTO(foundPost);
 	}
 }
