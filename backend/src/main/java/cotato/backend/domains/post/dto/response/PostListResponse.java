@@ -1,6 +1,5 @@
 package cotato.backend.domains.post.dto.response;
 
-import cotato.backend.domains.post.dto.PostDTO;
 import cotato.backend.domains.post.dto.PostListDTO;
 import java.util.List;
 
