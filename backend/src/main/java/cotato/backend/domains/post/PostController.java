@@ -4,6 +4,7 @@ import cotato.backend.domains.post.dto.PostDTO;
 import cotato.backend.domains.post.dto.request.SavePostRequest;
 import cotato.backend.domains.post.dto.response.PostDetailResponse;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,14 +30,14 @@ public class PostController {
 	public ResponseEntity<DataResponse<Void>> savePostsByExcel(final @RequestBody @Valid SavePostsByExcelRequest request) {
 		postService.saveEstatesByExcel(request.path());
 
-		return ResponseEntity.ok(DataResponse.ok());
+		return ResponseEntity.status(HttpStatus.CREATED).body(DataResponse.created());
 	}
 
 	@PostMapping
 	public ResponseEntity<DataResponse<Void>> savePost(final @RequestBody @Valid SavePostRequest savePostRequest) {
 		postService.savePost(PostDTO.toPostDTO(savePostRequest));
 
-		return ResponseEntity.ok(DataResponse.ok());
+		return ResponseEntity.status(HttpStatus.CREATED).body(DataResponse.created());
 	}
 
 	@GetMapping("/{id}")
