@@ -60,4 +60,16 @@ public class PostService {
 
 		return PostDTO.toPostDTO(foundPost);
 	}
+
+	// 전달받은 id 값으로 Post 엔티티를 조회하고, 있다면 삭제
+	// 없다면 에러를 반환
+	@Transactional
+	public void deletePostById(final long id) {
+		// 대상 게시글이 없다면 에러 반환
+		if (!postRepository.existsById(id)) {
+			throw PostException.from(PostErrorCode.NOT_EXIST);
+		}
+
+		postRepository.deleteById(id);
+	}
 }
