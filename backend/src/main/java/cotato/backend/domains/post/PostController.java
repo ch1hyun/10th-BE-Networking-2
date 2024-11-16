@@ -1,5 +1,7 @@
 package cotato.backend.domains.post;
 
+import cotato.backend.domains.post.dto.PostDTO;
+import cotato.backend.domains.post.dto.request.SavePostRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,8 +21,15 @@ public class PostController {
 	private final PostService postService;
 
 	@PostMapping("/excel")
-	public ResponseEntity<DataResponse<Void>> savePostsByExcel(@RequestBody @Valid SavePostsByExcelRequest request) {
+	public ResponseEntity<DataResponse<Void>> savePostsByExcel(final @RequestBody @Valid SavePostsByExcelRequest request) {
 		postService.saveEstatesByExcel(request.path());
+
+		return ResponseEntity.ok(DataResponse.ok());
+	}
+
+	@PostMapping
+	public ResponseEntity<DataResponse<Void>> savePost(final @RequestBody @Valid SavePostRequest savePostRequest) {
+		postService.savePost(PostDTO.toPostDTO(savePostRequest));
 
 		return ResponseEntity.ok(DataResponse.ok());
 	}
