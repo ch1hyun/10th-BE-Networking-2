@@ -2,6 +2,7 @@ package cotato.backend.domains.post;
 
 import static cotato.backend.common.exception.ErrorCode.*;
 
+import cotato.backend.domains.post.dto.PostDTO;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,20 +21,18 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 public class PostService {
 
+	private final PostRepository postRepository;
+
 	// 로컬 파일 경로로부터 엑셀 파일을 읽어 Post 엔터티로 변환하고 저장
-	public void saveEstatesByExcel(String filePath) {
+	public void saveEstatesByExcel(final String filePath) {
 		try {
 			// 엑셀 파일을 읽어 데이터 프레임 형태로 변환
 			List<Post> posts = ExcelUtils.parseExcelFile(filePath).stream()
-				.map(row -> {
-					String title = row.get("title");
-					String content = row.get("content");
-					String name = row.get("name");
+					.map(PostDTO::toPostDTO)
+					.map(Post::toPost)
+					.toList();
 
-					return new Post(title, content, name);
-				})
-				.collect(Collectors.toList());
-
+			postRepository.saveAll(posts);
 		} catch (Exception e) {
 			log.error("Failed to save estates by excel", e);
 			throw ApiException.from(INTERNAL_SERVER_ERROR);
