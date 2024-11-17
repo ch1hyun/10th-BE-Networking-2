@@ -1,10 +1,11 @@
-package cotato.backend.domains.post;
+package cotato.backend.domains.post.controller;
 
 import cotato.backend.domains.post.dto.PostDTO;
 import cotato.backend.domains.post.dto.PostListDTO;
 import cotato.backend.domains.post.dto.request.SavePostRequest;
 import cotato.backend.domains.post.dto.response.PostDetailResponse;
 import cotato.backend.domains.post.dto.response.PostListResponse;
+import cotato.backend.domains.post.service.PostService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

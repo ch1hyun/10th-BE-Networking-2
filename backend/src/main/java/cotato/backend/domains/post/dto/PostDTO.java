@@ -1,6 +1,6 @@
 package cotato.backend.domains.post.dto;
 
-import cotato.backend.domains.post.Post;
+import cotato.backend.domains.post.entity.Post;
 import cotato.backend.domains.post.dto.request.SavePostRequest;
 import java.util.Map;
 

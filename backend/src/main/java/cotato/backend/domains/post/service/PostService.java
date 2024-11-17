@@ -1,7 +1,9 @@
-package cotato.backend.domains.post;
+package cotato.backend.domains.post.service;
 
 import static cotato.backend.common.exception.ErrorCode.*;
 
+import cotato.backend.domains.post.entity.Post;
+import cotato.backend.domains.post.repository.PostRepository;
 import cotato.backend.domains.post.dto.PostDTO;
 import cotato.backend.domains.post.dto.PostListDTO;
 import cotato.backend.domains.post.exception.PostErrorCode;
