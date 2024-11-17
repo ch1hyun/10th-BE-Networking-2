@@ -3,6 +3,7 @@ package cotato.backend.domains.post.service;
 import static cotato.backend.common.exception.ErrorCode.*;
 
 import cotato.backend.domains.post.entity.Post;
+import cotato.backend.domains.post.repository.ExcelBatchRepository;
 import cotato.backend.domains.post.repository.PostRepository;
 import cotato.backend.domains.post.dto.PostDTO;
 import cotato.backend.domains.post.dto.PostListDTO;
@@ -32,6 +33,7 @@ public class PostService {
 	private static final int PAGE_SIZE = 10;
 
 	private final PostRepository postRepository;
+	private final ExcelBatchRepository excelBatchRepository;
 
 	@Transactional(readOnly = true)
 	protected Sort getSort() {
@@ -59,7 +61,7 @@ public class PostService {
 					.map(Post::toPost)
 					.toList();
 
-			postRepository.saveAll(posts);
+			excelBatchRepository.saveAllPosts(posts);
 		} catch (Exception e) {
 			log.error("Failed to save estates by excel", e);
 			throw ApiException.from(INTERNAL_SERVER_ERROR);
