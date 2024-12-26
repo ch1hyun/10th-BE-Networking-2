@@ -5,7 +5,7 @@ import cotato.backend.domains.post.dto.PostListDTO;
 import cotato.backend.domains.post.dto.request.SavePostRequest;
 import cotato.backend.domains.post.dto.response.PostDetailResponse;
 import cotato.backend.domains.post.dto.response.PostListResponse;
-import cotato.backend.domains.post.service.PostService;
+import cotato.backend.domains.post.facade.PostFacade;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,18 +27,18 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PostController {
 
-	private final PostService postService;
+	private final PostFacade postFacade;
 
 	@PostMapping("/excel")
 	public ResponseEntity<DataResponse<Void>> savePostsByExcel(final @RequestBody @Valid SavePostsByExcelRequest request) {
-		postService.saveEstatesByExcel(request.path());
+		postFacade.saveEstatesByExcel(request.path());
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(DataResponse.created());
 	}
 
 	@GetMapping
 	public ResponseEntity<DataResponse<PostListResponse>> getPosts(final @RequestParam(required = false, defaultValue = "0") int page) {
-		PostListDTO postListDTO = postService.getPosts(page);
+		PostListDTO postListDTO = postFacade.getPosts(page);
 		PostListResponse postListResponse = PostListResponse.toPostListResponse(postListDTO);
 
 		return ResponseEntity.ok(DataResponse.from(postListResponse));
@@ -46,14 +46,14 @@ public class PostController {
 
 	@PostMapping
 	public ResponseEntity<DataResponse<Void>> savePost(final @RequestBody @Valid SavePostRequest savePostRequest) {
-		postService.savePost(PostDTO.toPostDTO(savePostRequest));
+		postFacade.savePost(PostDTO.toPostDTO(savePostRequest));
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(DataResponse.created());
 	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<DataResponse<PostDetailResponse>> getPost(final @PathVariable("id") long id) {
-		final PostDTO postDTO = postService.findPostByIdWithPessimisticLock(id);
+		final PostDTO postDTO = postFacade.findPostByIdWithOptimisticLock(id);
 		final PostDetailResponse postDetailResponse = PostDetailResponse.toPostDetailResponse(postDTO);
 
 		return ResponseEntity.ok(DataResponse.from(postDetailResponse));
@@ -61,7 +61,7 @@ public class PostController {
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<DataResponse<Void>> deletePost(final @PathVariable("id") long id) {
-		postService.deletePostById(id);
+		postFacade.deletePostById(id);
 
 		return ResponseEntity.ok(DataResponse.ok());
 	}

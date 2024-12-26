@@ -12,4 +12,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("FROM Post WHERE id=:postId")
     Optional<Post> findByIdWithPessimisticLock(@Param("postId") final long postId);
+
+    @Lock(LockModeType.OPTIMISTIC)
+    @Query("FROM Post WHERE id=:postId")
+    Optional<Post> findByIdWithOptimisticLock(@Param("postId") final long postId);
 }

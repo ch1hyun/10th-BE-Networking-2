@@ -99,6 +99,18 @@ public class PostService {
 		return PostDTO.toPostDTO(foundPost);
 	}
 
+	// findPostById 함수의 동시성 문제 해결 버전 - Optimistic Lock
+	@Transactional
+	public PostDTO findPostByIdWithOptimisticLock(final long id) {
+		Post foundPost = postRepository.findByIdWithOptimisticLock(id).orElseThrow(
+				() -> PostException.from(PostErrorCode.NOT_EXIST)
+		);
+
+		foundPost.setViews(foundPost.getViews() + INCREASE_VIEWS_AMOUNT);
+
+		return PostDTO.toPostDTO(foundPost);
+	}
+
 	// 전달받은 id 값으로 Post 엔티티를 조회하고, 있다면 삭제
 	// 없다면 에러를 반환
 	@Transactional
